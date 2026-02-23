@@ -1,6 +1,7 @@
 file_format_version 1.1;
 
-timeset time_uart;
+timeset Idle_test;
+timeset UART_LB;
 
 pattern loopback (UART_PINS)
 {

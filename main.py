@@ -25,7 +25,7 @@ def main():
 
     validate_inputs(test_name, baud, 8, parity, stop_bits, tx_data,test_type)
 
-    if test_type == ("tx","loopback"):
+    if test_type in ("tx","loopback"):
         waveform_bits = build_waveform_bits(tx_data, parity)
         loop_count = calculate_loop_count(tx_data)
     elif test_type == "rx":
