@@ -7,7 +7,7 @@ from ni_session_manager import create_session, load_and_run_pattern, configure_u
 
 def main():
     test_name = input("Test Name: ")
-    test_type = input("Test Mode (tx/rx): ").strip().lower()
+    test_type = input("Test Mode (tx/rx/loopback): ").strip().lower()
     baud = int(input("Baud Rate: "))
     parity = input("Parity (None/Even/Odd): ")
     stop_bits = int(input("Stop Bits (1/2): "))
@@ -25,7 +25,7 @@ def main():
 
     validate_inputs(test_name, baud, 8, parity, stop_bits, tx_data,test_type)
 
-    if test_type == "tx":
+    if test_type == ("tx","loopback"):
         waveform_bits = build_waveform_bits(tx_data, parity)
         loop_count = calculate_loop_count(tx_data)
     elif test_type == "rx":
@@ -45,6 +45,9 @@ def main():
     elif test_type == "rx":
         pin = "RX_PIN" 
         mode = "rx"
+    elif test_type == "loopback":
+        pin = "UART_PINS"
+        mode = "loopback"
     else:
         raise ValueError("Invalid test type")
     write_digipatsrc(
