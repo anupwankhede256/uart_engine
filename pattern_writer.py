@@ -114,34 +114,34 @@ def write_digipatsrc(
             BIT_REPEAT = 819
             EDGE_REPEAT = 80
 
-        f.write("  set_loop(reg0) Idle_test X X;\n")
-        f.write("  source_start(new_waveform) UART_LB X X;\n\n")
+            f.write("  set_loop(reg0) Idle_test X X;\n")
+            f.write("  source_start(new_waveform) UART_LB X X;\n\n")
 
-        #-----------------------TX SECTION------------------------------
-        f.write("START_y: UART_LB 0 X;\n")
+            #-----------------------TX SECTION------------------------------
+            f.write("START_y: UART_LB 0 X;\n")
 
-        f.write("  repeat(8), source UART_LB D X;\n")
-        f.write("  UART_LB 1 X;\n")
-        f.write("  end_loop(START_y) X X;\n\n")
+            f.write("  repeat(8), source UART_LB D X;\n")
+            f.write("  UART_LB 1 X;\n")
+            f.write("  end_loop(START_y) X X;\n\n")
 
-        #-----------------------RX SECTION------------------------------
-        f.write("  set_loop(reg0) Idle_test X X;\n")
-        f.write("  capture_start(new_waveform) Idle_test X X;\n\n")
+            #-----------------------RX SECTION------------------------------
+            f.write("  set_loop(reg0) Idle_test X X;\n")
+            f.write("  capture_start(new_waveform) Idle_test X X;\n\n")
 
-        f.write(f"st: repeat({EDGE_REPEAT}), match Idle_test X L;\n")
-        f.write("FindFallingEdge: jump_if(matched, FindFallingEdge) Idle_test X L:\n")
-        f.write("FindRisingEdge: jump_if(!matched, FindRisingEdge) Idle_test X L;\n\n")
+            f.write(f"st: repeat({EDGE_REPEAT}), match Idle_test X L;\n")
+            f.write("FindFallingEdge: jump_if(matched, FindFallingEdge) Idle_test X L:\n")
+            f.write("FindRisingEdge: jump_if(!matched, FindRisingEdge) Idle_test X L;\n\n")
 
-        f.write("read:\n")
+            f.write("read:\n")
 
-        for _ in range(8):
+            for _ in range(8):
+                f.write(f"  repeat({BIT_REPEAT}) Idle_test X X;\n")
+                f.write("  capture Idle_test X V;\n")
+
             f.write(f"  repeat({BIT_REPEAT}) Idle_test X X;\n")
-            f.write("  capture Idle_test X V;\n")
+            f.write("  Idle_test X H;\n\n")
 
-        f.write(f"  repeat({BIT_REPEAT}) Idle_test X X;\n")
-        f.write("  Idle_test X H;\n\n")
-
-        f.write("  end_loop(st) X X;\n")
-        f.write("  capture_stop Idle_test X X;\n")
-        f.write("  halt Idle_test X X;\n")
-        f.write("}\n")
+            f.write("  end_loop(st) X X;\n")
+            f.write("  capture_stop Idle_test X X;\n")
+            f.write("  halt Idle_test X X;\n")
+            f.write("}\n")
