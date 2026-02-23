@@ -28,7 +28,12 @@ def write_digipatsrc(
     with open(file_path, "w") as f:
 
         f.write("file_format_version 1.1;\n\n")
-        f.write("timeset time_uart;\n\n")
+        if test_mode == "loopback":
+            f.write("timeset Idle_test;\n")
+            f.write("timeset UART_LB;\n\n")
+        else:
+            f.write("timeset time_uart;\n\n")
+            
         f.write(f"pattern {pattern_name} ({pin_name})\n")
         f.write("{\n")
 
