@@ -58,15 +58,14 @@ def configure_uart_levels(session):
     print("IOH               : -2 mA")
     print("======================================\n")
 
-
 def load_and_run_pattern(session, digipat_path, pattern_name,
                          waveform_bits, loop_count, test_mode):
 
     session.load_pattern(digipat_path)
 
-    # --------------------------
+    # ==================================================
     # TX MODE
-    # --------------------------
+    # ==================================================
     if test_mode == "tx":
 
         waveform_name = "new_waveform"
@@ -91,28 +90,31 @@ def load_and_run_pattern(session, digipat_path, pattern_name,
         results = session.burst_pattern(pattern_name)
         print("Burst Results:", results)
 
+    # ==================================================
+    # LOOPBACK MODE
+    # ==================================================
     elif test_mode == "loopback":
 
         waveform_name = "new_waveform"
 
-        # TX source
+        # ---- TX SOURCE ----
         session.pins["TX_PIN"].create_source_waveform_serial(
-            waveform_name,
-            nidigital.SourceDataMapping.BROADCAST,
-            8,
-            nidigital.BitOrder.MSB
+            waveform_name=waveform_name,
+            data_mapping=nidigital.SourceDataMapping.BROADCAST,
+            sample_width=8,
+            bit_order=nidigital.BitOrder.MSB
         )
 
-        session.pins["TX_PIN"].write_source_waveform_serial(
+        session.write_source_waveform_broadcast(
             waveform_name,
             waveform_bits
         )
 
-        # RX capture
+        # ---- RX CAPTURE ----
         session.pins["RX_PIN"].create_capture_waveform_serial(
-            waveform_name,
-            8,
-            nidigital.BitOrder.LSB
+            waveform_name=waveform_name,
+            sample_width=8,
+            bit_order=nidigital.BitOrder.LSB
         )
 
         session.write_sequencer_register(
@@ -124,15 +126,15 @@ def load_and_run_pattern(session, digipat_path, pattern_name,
 
         data = session.fetch_capture_waveform(
             waveform_name,
-            loop_count
+            samples_to_read=loop_count
         )
 
         print("Loopback Capture:", data)
 
-    # --------------------------
+    # ==================================================
     # RX MODE
-    # --------------------------
-    else:
+    # ==================================================
+    elif test_mode == "rx":
 
         capture_waveform = "read"
 
@@ -154,4 +156,4 @@ def load_and_run_pattern(session, digipat_path, pattern_name,
             samples_to_read=loop_count
         )
 
-        print("\nCaptured Data:", data)
+        print("Captured Data:", data)
