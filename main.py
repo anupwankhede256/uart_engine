@@ -18,6 +18,8 @@ def main():
         tx_data = input("Transmission Data: ")
     elif test_type == "rx":
         rx_count = int(input("Number to characters to receive: "))
+    elif test_type == "loopback":
+        tx_data = input("Transmission Data: ")
     else:
         raise ValueError("invalid Test Type")
 
