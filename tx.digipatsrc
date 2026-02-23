@@ -1,0 +1,37 @@
+file_format_version 1.1;
+
+timeset time_uart;
+
+pattern tx (TX_PIN)
+{
+    time_uart X;
+
+    source_start(new_waveform) time_uart X;
+    set_loop(reg0) time_uart X;
+
+start: time_uart 0;
+
+    source time_uart D;
+    source time_uart D;
+    source time_uart D;
+    source time_uart D;
+    source time_uart D;
+    source time_uart D;
+    source time_uart D;
+    source time_uart D;
+    time_uart 1;
+
+    end_loop(start) time_uart X;
+    halt time_uart X;
+}
+  set_loop(reg0) Idle_test X X;
+  source_start(new_waveform) UART_LB X X;
+
+START_y: UART_LB 0 X;
+  repeat(8), source UART_LB D X;
+  UART_LB 1 X;
+  end_loop(START_y) X X;
+
+  set_loop(reg0) Idle_test X X;
+  capture_start(new_waveform) Idle_test X X;
+
