@@ -24,14 +24,3 @@ start: time_uart 0;
     end_loop(start) time_uart X;
     halt time_uart X;
 }
-  set_loop(reg0) Idle_test X X;
-  source_start(new_waveform) UART_LB X X;
-
-START_y: UART_LB 0 X;
-  repeat(8), source UART_LB D X;
-  UART_LB 1 X;
-  end_loop(START_y) X X;
-
-  set_loop(reg0) Idle_test X X;
-  capture_start(new_waveform) Idle_test X X;
-

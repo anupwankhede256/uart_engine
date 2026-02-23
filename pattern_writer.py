@@ -109,7 +109,7 @@ def write_digipatsrc(
         # -------------------------------------------------
         # LOOPBACK MODE
         # -------------------------------------------------
-        elif test_mode == "loopback":
+        elif test_mode == "lb":
 
             BIT_REPEAT = 819
             EDGE_REPEAT = 80
