@@ -120,8 +120,8 @@ def write_digipatsrc(
             EDGE_REPEAT = 80
 
             # TX section
-            f.write("    set_loop(reg0) UART_LB X X;\n")
-            f.write("    source_start(new_waveform) UART_LB X X;\n\n")
+            f.write("    set_loop(reg0) UART_LB;\n")
+            f.write("    source_start(new_waveform) UART_LB;\n\n")
 
             f.write("START_TX: UART_LB 0 X;\n")
 
@@ -129,15 +129,15 @@ def write_digipatsrc(
                 f.write("    UART_LB D X;\n")
 
             f.write("    UART_LB 1 X;\n")
-            f.write("    end_loop(START_TX) UART_LB X X;\n\n")
+            f.write("    end_loop(START_TX) UART_LB;\n\n")
 
             # RX section
             f.write("    set_loop(reg0) Idle_test X X;\n")
-            f.write("    capture_start(read) Idle_test X X;\n\n")
+            f.write("    capture_start(read) Idle_test;\n\n")
 
             f.write(f"START_RX: repeat({EDGE_REPEAT}) Idle_test X L;\n")
-            f.write("FindFallingEdge: jump_if(matched, FindFallingEdge) Idle_test X L;\n")
-            f.write("FindRisingEdge: jump_if(!matched, FindRisingEdge) Idle_test X L;\n\n")
+            f.write("FindFallingEdge: jump_if(matched, FindFallingEdge) Idle_test;\n")
+            f.write("FindRisingEdge: jump_if(!matched, FindRisingEdge) Idle_test;\n\n")
 
             for _ in range(8):
                 f.write(f"    repeat({BIT_REPEAT}) Idle_test X X;\n")
@@ -146,7 +146,7 @@ def write_digipatsrc(
             f.write(f"    repeat({BIT_REPEAT}) Idle_test X X;\n")
             f.write("    Idle_test X H;\n\n")
 
-            f.write("    end_loop(START_RX) Idle_test X X;\n")
-            f.write("    capture_stop Idle_test X X;\n")
-            f.write("    halt Idle_test X X;\n")
+            f.write("    end_loop(START_RX) Idle_test;\n")
+            f.write("    capture_stop Idle_test;\n")
+            f.write("    halt Idle_test;\n")
             f.write("}\n")
