@@ -28,13 +28,16 @@ def write_digipatsrc(
     with open(file_path, "w") as f:
 
         f.write("file_format_version 1.1;\n\n")
-        if test_mode == "loopback":
+        if test_mode == "lb":
             f.write("timeset Idle_test;\n")
             f.write("timeset UART_LB;\n\n")
         else:
             f.write("timeset time_uart;\n\n")
 
-        f.write(f"pattern {pattern_name} ({pin_name})\n")
+        if test_mode == "lb":
+            f.write(f"pattern {pattern_name} (TX_PIN,RX_PIN)\n")
+        else:
+            f.write(f"pattern {pattern_name} ({pin_name})\n")
         f.write("{\n")
 
         # -------------------------------------------------
@@ -81,72 +84,47 @@ def write_digipatsrc(
         # -------------------------------------------------
         # RECEPTION MODE
         # -------------------------------------------------
-        elif test_mode == "rx":
-
-            EDGE_REPEAT = 80
-            BIT_REPEAT = 819
-
-            f.write(f"    set_loop(reg0) time_uart X;\n")
-            f.write("    capture_start(read) time_uart X;\n\n")
-
-            f.write(f"Start: repeat({EDGE_REPEAT}), match time_uart L;\n")
-            f.write("FindFallingEdge: jump_if(matched, FindFallingEdge) time_uart X;\n")
-            f.write("FindRisingEdge: jump_if(!matched, FindRisingEdge) time_uart X;\n\n")
-
-            # First data bit attached to label
-            f.write(f"read: repeat({BIT_REPEAT}) time_uart X;\n")
-            f.write("    capture time_uart V;\n")
-
-            # Remaining 7 bits
-            for _ in range(7):
-                f.write(f"    repeat({BIT_REPEAT}) time_uart X;\n")
-                f.write("    capture time_uart V;\n")
-
-            # Stop bit
-            f.write(f"    repeat({BIT_REPEAT}) time_uart X;\n")
-            f.write("    time_uart H;\n\n")
-
-            f.write("    end_loop(Start) time_uart X;\n")
-            f.write("    capture_stop time_uart X;\n")
-            f.write("    halt time_uart X;\n")
-            f.write("}\n")
-
-        # -------------------------------------------------
-        # LOOPBACK MODE
-        # -------------------------------------------------
-        elif test_mode == "loopback":
+        elif test_mode == "lb":
 
             BIT_REPEAT = 819
             EDGE_REPEAT = 80
 
             # TX section
-            f.write("    set_loop(reg0) UART_LB;\n")
-            f.write("    source_start(new_waveform) UART_LB;\n\n")
+            f.write("    set_loop(reg0) Idle_test XX;\n\n")
 
-            f.write("START_TX: UART_LB 0 X;\n")
+            f.write("    source_start(new_waveform) UART_LB XX;\n")
+            f.write("    UART_LB 1X;\n\n")
 
-            for _ in range(8):
-                f.write("    UART_LB D X;\n")
-
-            f.write("    UART_LB 1 X;\n")
-            f.write("    end_loop(START_TX) UART_LB;\n\n")
+            f.write("START_y:\n")
+            f.write("    UART_LB 0X;\n")
+            f.write("    repeat(8), source UART_LB DX;\n")
+            f.write("    UART_LB 1X;\n")
+            f.write("    end_loop(START_y) Idle_test XX;\n\n")
 
             # RX section
-            f.write("    set_loop(reg0) Idle_test X X;\n")
-            f.write("    capture_start(read) Idle_test;\n\n")
+            f.write("    set_loop(reg0) Idle_test XX;\n")
+            f.write("    capture_start(new_waveform) Idle_test XX;\n\n")
 
-            f.write(f"START_RX: repeat({EDGE_REPEAT}) Idle_test X L;\n")
-            f.write("FindFallingEdge: jump_if(matched, FindFallingEdge) Idle_test;\n")
-            f.write("FindRisingEdge: jump_if(!matched, FindRisingEdge) Idle_test;\n\n")
+            f.write("st:\n")
+            f.write(f"    repeat({EDGE_REPEAT}), match Idle_test XL;\n\n")
+
+            f.write("FindFallingEdge:\n")
+            f.write("    jump_if(matched, FindFallingEdge) Idle_test XX;\n\n")
+
+            f.write("FindRisingEdge:\n")
+            f.write("    jump_if(!matched, FindRisingEdge) Idle_test XX;\n\n")
+
+            f.write("read:\n")
 
             for _ in range(8):
-                f.write(f"    repeat({BIT_REPEAT}) Idle_test X X;\n")
-                f.write("    capture Idle_test X V;\n")
+                f.write(f"    repeat({BIT_REPEAT}) Idle_test XX;\n")
+                f.write("    capture Idle_test XV;\n")
 
-            f.write(f"    repeat({BIT_REPEAT}) Idle_test X X;\n")
-            f.write("    Idle_test X H;\n\n")
+            f.write(f"    repeat({BIT_REPEAT}) Idle_test XX;\n")
+            f.write("    Idle_test XH;\n\n")
 
-            f.write("    end_loop(START_RX) Idle_test;\n")
-            f.write("    capture_stop Idle_test;\n")
-            f.write("    halt Idle_test;\n")
+            f.write("    end_loop(st) Idle_test XX;\n")
+            f.write("    capture_stop Idle_test XX;\n")
+            f.write("    halt Idle_test XX;\n")
+
             f.write("}\n")

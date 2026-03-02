@@ -55,56 +55,74 @@ def configure_uart_timing(session, baud_rate, test_mode):
     # -----------------------------
     # LOOPBACK MODE (Dynamic)
     # -----------------------------
-    elif test_mode == "loopback":
+    elif test_mode == "lb":
+        
 
-        bit_period = 1/baud_rate
+        bit_period = 1.0 / baud_rate
+        rx_period = bit_period / 820
 
-        session.create_time_set("UART_LB")
+        # Create both time sets
+        try:
+            session.create_time_set("UART_LB")
+        except nidigital.Error:
+            pass
+
+        try:
+            session.create_time_set("Idle_test")
+        except nidigital.Error:
+            pass
+
+        # -----------------------
+        # TX TIMESET (UART_LB)
+        # -----------------------
         session.pins["TX_PIN"].configure_time_set_period("UART_LB", bit_period)
-        session.pins["TX_PIN"].configure_timme_set_drive_format(
+
+        session.pins["TX_PIN"].configure_time_set_drive_format(
             "UART_LB",
             nidigital.DriveFormat.NR
         )
+
         session.pins["TX_PIN"].configure_time_set_drive_edges(
             "UART_LB",
             nidigital.DriveFormat.NR,
-            0.0,
-            0.0,
-            0.0,
-            bit_period
+            drive_on_edge=0.0,
+            drive_data_edge=0.0,
+            drive_return_edge=0.0,
+            drive_off_edge=bit_period
         )
-        
+
         session.pins["TX_PIN"].configure_time_set_compare_edges_strobe(
             "UART_LB",
-            bit_period/2
+            bit_period / 2
         )
 
-        # RX timset
-        rx_period = bit_period / 820
+        # -----------------------
+        # RX TIMESET (Idle_test)
+        # -----------------------
+        session.pins["RX_PIN"].configure_time_set_period("Idle_test", rx_period)
 
-        session.create_time_set("Idle_test")
-
-        session.pins["UART_PINS"].configure_time_set_period("Idle_test", rx_period)
-        session.pins["UART_PINS"].configure_time_set_drive_format(
+        session.pins["RX_PIN"].configure_time_set_drive_format(
             "Idle_test",
             nidigital.DriveFormat.NR
         )
-        session.pins["UART_PINS"].configure_time_set_drive_edges(
+
+        session.pins["RX_PIN"].configure_time_set_drive_edges(
             "Idle_test",
             nidigital.DriveFormat.NR,
-            0.0,
-            0.0,
-            0.0,
-            rx_period
+            drive_on_edge=0.0,
+            drive_data_edge=0.0,
+            drive_return_edge=0.0,
+            drive_off_edge=rx_period
         )
-        session.pins["UART_PINS"].configure_time_set_compare_edges_strobe(
+
+        session.pins["RX_PIN"].configure_time_set_compare_edges_strobe(
             "Idle_test",
             rx_period
         )
 
         print("\n========== LOOPBACK TIMESET CONFIG ==========")
-        print(f"TX Period (µs)  : {bit_period * 1e6:.6f}")
-        print(f"RX Period (ns)  : {rx_period * 1e9:.6f}")
+        print(f"TX Period (µs) : {bit_period*1e6:.6f}")
+        print(f"RX Period (ns) : {rx_period*1e9:.6f}")
         print("=============================================\n")
 
     # -----------------------------

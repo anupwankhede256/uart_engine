@@ -93,7 +93,7 @@ def load_and_run_pattern(session, digipat_path, pattern_name,
     # ==================================================
     # LOOPBACK MODE
     # ==================================================
-    elif test_mode == "loopback":
+    elif test_mode == "lb":
 
         waveform_name = "new_waveform"
 

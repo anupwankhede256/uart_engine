@@ -1,0 +1,54 @@
+file_format_version 1.1;
+
+timeset Idle_test;
+timeset UART_LB;
+
+pattern lb (TX_PIN,RX_PIN)
+{
+    set_loop(reg0) Idle_test XX;
+
+    source_start(new_waveform) UART_LB XX;
+    UART_LB 1X;
+
+START_y:
+    UART_LB 0X;
+    repeat(8), source UART_LB DX;
+    UART_LB 1X;
+    end_loop(START_y) Idle_test XX;
+
+    set_loop(reg0) Idle_test XX;
+    capture_start(new_waveform) Idle_test XX;
+
+st:
+    repeat(80), match Idle_test XL;
+
+FindFallingEdge:
+    jump_if(matched, FindFallingEdge) Idle_test XX;
+
+FindRisingEdge:
+    jump_if(!matched, FindRisingEdge) Idle_test XX;
+
+read:
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    capture Idle_test XV;
+    repeat(819) Idle_test XX;
+    Idle_test XH;
+
+    end_loop(st) Idle_test XX;
+    capture_stop Idle_test XX;
+    halt Idle_test XX;
+}
