@@ -1,0 +1,36 @@
+file_format_version 1.1;
+
+timeset time_uart;
+
+pattern rx (RX_PIN)
+{
+    set_loop(reg0) time_uart X;
+    capture_start(read) time_uart X;
+
+Start: repeat(80) time_uart L;
+FindFallingEdge: jump_if(matched, FindFallingEdge) time_uart X;
+FindRisingEdge: jump_if(!matched, FindRisingEdge) time_uart X;
+
+read: repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    capture time_uart V;
+    repeat(819) time_uart X;
+    time_uart H;
+
+    end_loop(Start) time_uart X;
+    capture_stop time_uart X;
+    halt time_uart X;
+}

@@ -75,7 +75,7 @@ def configure_uart_timing(session, baud_rate, test_mode):
         # -----------------------
         # TX TIMESET (UART_LB)
         # -----------------------
-        session.pins["TX_PIN"].configure_time_set_period("UART_LB", bit_period)
+        session.configure_time_set_period("UART_LB", bit_period)
 
         session.pins["TX_PIN"].configure_time_set_drive_format(
             "UART_LB",
@@ -99,7 +99,7 @@ def configure_uart_timing(session, baud_rate, test_mode):
         # -----------------------
         # RX TIMESET (Idle_test)
         # -----------------------
-        session.pins["RX_PIN"].configure_time_set_period("Idle_test", rx_period)
+        session.configure_time_set_period("Idle_test", rx_period)
 
         session.pins["RX_PIN"].configure_time_set_drive_format(
             "Idle_test",

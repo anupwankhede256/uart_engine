@@ -5,50 +5,50 @@ timeset UART_LB;
 
 pattern lb (TX_PIN,RX_PIN)
 {
-    set_loop(reg0) Idle_test XX;
+    set_loop(reg0) Idle_test X X;
 
-    source_start(new_waveform) UART_LB XX;
-    UART_LB 1X;
+    source_start(new_waveform) UART_LB X X;
+    UART_LB 1 X;
 
 START_y:
-    UART_LB 0X;
-    repeat(8), source UART_LB DX;
-    UART_LB 1X;
-    end_loop(START_y) Idle_test XX;
+    UART_LB 0 X;
+    repeat(8), source UART_LB D X;
+    UART_LB 1 X;
+    end_loop(START_y) Idle_test X X;
 
-    set_loop(reg0) Idle_test XX;
-    capture_start(new_waveform) Idle_test XX;
+    set_loop(reg0) Idle_test X X;
+    capture_start(new_waveform) Idle_test X X;
 
 st:
-    repeat(80), match Idle_test XL;
+    repeat(80), match Idle_test X L;
 
 FindFallingEdge:
-    jump_if(matched, FindFallingEdge) Idle_test XX;
+    jump_if(matched, FindFallingEdge) Idle_test X X;
 
 FindRisingEdge:
-    jump_if(!matched, FindRisingEdge) Idle_test XX;
+    jump_if(!matched, FindRisingEdge) Idle_test X X;
 
 read:
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    capture Idle_test XV;
-    repeat(819) Idle_test XX;
-    Idle_test XH;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    capture Idle_test X V;
+    repeat(819) Idle_test X X;
+    Idle_test X H;
 
-    end_loop(st) Idle_test XX;
-    capture_stop Idle_test XX;
-    halt Idle_test XX;
+    end_loop(st) Idle_test X X;
+    capture_stop Idle_test X X;
+    halt Idle_test X X;
 }
